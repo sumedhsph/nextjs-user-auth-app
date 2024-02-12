@@ -17,9 +17,13 @@ export default function SignUpPage() {
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const onSignUp = async () => {
+  const onSignUp = async (e:any) => {
+    e.preventDefualt();
+
     try {
       //setLoading(true);
+      setButtonDisabled(true);
+        
       const response = await axios.post("/api/users/signup", user);
       console.log("signup success", response.data);
     } catch (error: any) {
@@ -27,10 +31,12 @@ export default function SignUpPage() {
       toast.error("Signup failed", error.message);
     } finally {
       //setLoading(false);
+      
       toast.success("Signup successfull");
       setTimeout(() => {
         router.push("/login");
       }, 1000);
+      setButtonDisabled(false);
     }
   };
 
@@ -64,7 +70,7 @@ export default function SignUpPage() {
         <div className="prose">
           <h1>Sign Up</h1>
         </div>
-        <div>
+        <form onSubmit={onSignUp}>
           <div className="form-control mt-6">
             <label className="label" htmlFor="email">
               *Email
@@ -114,9 +120,10 @@ export default function SignUpPage() {
             <button
               className="btn btn-primary btn-wide"
               disabled={buttonDisabled}
-              onClick={onSignUp}
+               
             >
               {buttonDisabled ? `${err}` : "Signup"}
+              <span className="loading loading-spinner"></span>
             </button>
           </div>
 
@@ -126,7 +133,7 @@ export default function SignUpPage() {
           >
             Login here <FaCircleArrowRight className="inline-block" />
           </Link>
-        </div>
+        </form>
       </div>
     </>
   );
